@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniRide — Meu trajeto</title>
+<link rel="stylesheet" href="cadastrar-trajeto.css">
+</head>
+<body>
+<div class="app nonav">
+<div class="topbar"><a class="back" href="home.html">←</a><h1>Meu trajeto</h1></div>
+<form class="form" action="home.html">
+<input type="radio" name="m" id="seek" hidden><input type="radio" name="m" id="offer" hidden checked>
+<p class="label">Você quer</p>
+<div class="modes"><label for="seek" class="mode">🙋 Procurar carona</label><label for="offer" class="mode">🚗 Oferecer carona</label></div>
+<p class="label">Origem</p><div class="field"><span>📍</span><input value="Botafogo"></div>
+<p class="label">Destino</p><div class="field"><span>🎓</span><input value="PUC-Rio"></div>
+<p class="label">Dias da semana</p><div class="days"><input type="checkbox" id="d0" hidden><label for="d0" class="day">Dom</label><input type="checkbox" id="d1" hidden checked><label for="d1" class="day">Seg</label><input type="checkbox" id="d2" hidden checked><label for="d2" class="day">Ter</label><input type="checkbox" id="d3" hidden checked><label for="d3" class="day">Qua</label><input type="checkbox" id="d4" hidden checked><label for="d4" class="day">Qui</label><input type="checkbox" id="d5" hidden checked><label for="d5" class="day">Sex</label><input type="checkbox" id="d6" hidden><label for="d6" class="day">Sáb</label></div>
+<p class="label">Horário de saída</p><div class="field"><span>🕐</span><input type="time" value="07:20"></div>
+<p class="label seatsl">Vagas disponíveis</p><div class="seats"><input type="radio" name="v" id="v1" hidden><label for="v1" class="seat">1</label><input type="radio" name="v" id="v2" hidden checked><label for="v2" class="seat">2</label><input type="radio" name="v" id="v3" hidden><label for="v3" class="seat">3</label><input type="radio" name="v" id="v4" hidden><label for="v4" class="seat">4</label></div>
+<a class="btn" href="home.html">Salvar trajeto</a></form>
+</div>
+
+</body>
+</html>
