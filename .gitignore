@@ -1,0 +1,10 @@
+# Ambiente virtual do Python
+venv/
+.venv/
+
+# Banco de dados local (cada um gera o seu com migrate + PopulaBaseDados.py)
+db.sqlite3
+
+# Arquivos compilados do Python
+__pycache__/
+*.pyc
