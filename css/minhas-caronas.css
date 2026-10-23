@@ -51,3 +51,5 @@ body{font-family:'Outfit',sans-serif;background:#E5E7EB;color:var(--g700)}
 #a1:target~.match,#a2:target~.match,#r1:target~.nope,#r2:target~.nope{display:block}
 .req:has(span[id^=a]:target){border-left:4px solid var(--yellow)}
 .req:has(span[id^=r]:target){opacity:.5}
+.rate{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;background:#FEFCE8;color:#A16207;font-weight:700;font-size:14px;padding:10px;border-radius:12px}
+.rate:hover{background:#FEF9C3}.rate:active{transform:scale(.97)}
