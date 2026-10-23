@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniRide — Editar perfil</title>
+<link rel="stylesheet" href="{% static 'css/editar-perfil.css' %}">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <a class="back" href="{% url 'perfil' %}" aria-label="Voltar">←</a>
+  <div>
+    <h1>Editar perfil</h1>
+    <small>Atualize suas informações</small>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Foto e nome no topo -->
+  <section class="card who">
+    <div class="avatar BS">BS</div>
+    <div>
+      <p class="label">Foto de perfil</p>
+      <button type="button" class="link-btn">Trocar foto</button>
+    </div>
+  </section>
+
+  <!-- Formulário principal. O action/method serão ajustados quando houver a view de salvar. -->
+  <form class="card form" method="post" action="#">
+    {% csrf_token %}
+
+    <div class="field">
+      <label for="nome">Nome completo</label>
+      <input id="nome" name="nome" type="text" value="Bernardo Souza" required>
+    </div>
+
+    <div class="field">
+      <label for="curso">Curso</label>
+      <input id="curso" name="curso" type="text" value="Engenharia de Computação">
+    </div>
+
+    <div class="field">
+      <label for="email">E-mail universitário</label>
+      <input id="email" name="email" type="email" value="bernardo@puc-rio.br" readonly>
+      <small class="hint">O e-mail da universidade não pode ser alterado.</small>
+    </div>
+
+    <div class="field">
+      <label for="trajeto">Trajeto principal</label>
+      <input id="trajeto" name="trajeto" type="text" value="Botafogo → PUC-Rio">
+    </div>
+
+    <h2 class="section-title">Preferências de carona</h2>
+
+    <div class="field">
+      <label for="conversa">Nível de conversa</label>
+      <select id="conversa" name="conversa">
+        <option value="silencio">Prefiro silêncio</option>
+        <option value="leve" selected>Conversa leve</option>
+        <option value="animado">Gosto de conversar</option>
+      </select>
+    </div>
+
+    <label class="switch-row">
+      <span>
+        <strong>Viajar só com mulheres</strong>
+        <small>Mostrar apenas caronas com passageiras e motoristas mulheres</small>
+      </span>
+      <input type="checkbox" name="so_mulheres" class="switch">
+    </label>
+
+    <div class="actions">
+      <a class="btn ghost gray" href="{% url 'perfil' %}">Cancelar</a>
+      <button class="btn" type="submit">Salvar</button>
+    </div>
+  </form>
+</main>
+
+<nav class="nav">
+  <a href="{% url 'home' %}"><span>🏠</span>Início</a>
+  <a href="{% url 'minhas-caronas' %}"><span>🚗</span>Caronas</a>
+  <a href="{% url 'perfil' %}" class="on"><span>👤</span>Perfil</a>
+</nav>
+</div>
+</body>
+</html>
