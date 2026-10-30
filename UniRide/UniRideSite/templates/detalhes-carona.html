@@ -11,15 +11,15 @@
 <div class="app nonav">
 <div class="topbar"><a class="back" href="{% url 'caronas-encontradas' %}">←</a><h1>Detalhes da carona</h1></div>
 <div class="wrap">
-<div class="card prof"><div class="avatar AN">AN</div><div><h2>Ana</h2><p><i class="star">★</i> <b>4,8</b> · 23 caronas</p></div></div>
-<div class="card"><p class="label">Trajeto</p><div class="path"><div class="dots"><i class="d1"></i><i class="line"></i><i class="d2"></i></div><div><small>Partida</small><b>📍 Botafogo</b><small>Destino</small><b>🎓 PUC-Rio</b></div></div></div>
-<div class="card"><p class="label">Detalhes</p><div class="grid"><div><small>Horário</small><b>🕐 07:20</b></div><div><small>Vagas</small><b>🚗 2 disponíveis</b></div></div><small>Dias</small><div class="chips"><span class="chip b">Seg</span><span class="chip b">Qua</span><span class="chip b">Sex</span></div></div>
+<div class="card prof"><div class="avatar {{ carona.aluno.nome|slice:':2'|upper }}">{{ carona.aluno.nome|slice:':2'|upper }}</div><div><h2>{{ carona.aluno.nome }}</h2><p><i class="star">★</i> <b>{{ nota|floatformat:1|default:"—" }}</b> · {{ total_caronas }} carona{{ total_caronas|pluralize }}</p></div></div>
+<div class="card"><p class="label">Trajeto</p><div class="path"><div class="dots"><i class="d1"></i><i class="line"></i><i class="d2"></i></div><div><small>Partida</small><b>📍 {{ carona.origem }}</b><small>Destino</small><b>🎓 {{ carona.destino }}</b></div></div></div>
+<div class="card"><p class="label">Detalhes</p><div class="grid"><div><small>Horário</small><b>🕐 {{ carona.horario|time:"H:i" }}</b></div><div><small>Vagas</small><b>🚗 {{ carona.vagas }} disponíveis</b></div></div><small>Dias</small><div class="chips">{% if carona.dom %}<span class="chip b">Dom</span>{% endif %}{% if carona.seg %}<span class="chip b">Seg</span>{% endif %}{% if carona.ter %}<span class="chip b">Ter</span>{% endif %}{% if carona.qua %}<span class="chip b">Qua</span>{% endif %}{% if carona.qui %}<span class="chip b">Qui</span>{% endif %}{% if carona.sex %}<span class="chip b">Sex</span>{% endif %}{% if carona.sab %}<span class="chip b">Sáb</span>{% endif %}</div></div>
 <div class="card"><div class="row cp"><b>Compatibilidade</b><b style="color:var(--blue)">94%</b></div><div class="bar"><i style="width:94%"></i></div><small>Baseado nos seus dias e horário</small></div>
-<div id="enviado" class="ok"><span class="tick">✓</span><div><b>Solicitação enviada!</b><small>Aguardando confirmação de Ana</small></div></div>
+<div id="enviado" class="ok"><span class="tick">✓</span><div><b>Solicitação enviada!</b><small>Aguardando confirmação de {{ carona.aluno.nome }}</small></div></div>
 <a class="btn" href="#confirmar">Solicitar carona</a>
 </div>
 <div id="confirmar" class="modal"><a class="bg" href="#"></a><div class="sheet"><i class="grab"></i><h3>Confirmar solicitação</h3><p>Você deseja solicitar esta carona?</p>
-<div class="sum"><div class="row2"><div class="avatar AN">AN</div><b>Ana</b><span><i class="star">★</i> 4,8</span></div><small>📍 Botafogo → 🎓 PUC-Rio</small><small>🕐 07:20 · Seg • Qua • Sex</small></div>
+<div class="sum"><div class="row2"><div class="avatar {{ carona.aluno.nome|slice:':2'|upper }}">{{ carona.aluno.nome|slice:':2'|upper }}</div><b>{{ carona.aluno.nome }}</b><span><i class="star">★</i> {{ nota|floatformat:1|default:"—" }}</span></div><small>📍 {{ carona.origem }} → 🎓 {{ carona.destino }}</small><small>🕐 {{ carona.horario|time:"H:i" }}</small></div>
 <div class="acts"><a class="btn ghost gray" href="#">Cancelar</a><a class="btn" href="#enviado">Confirmar</a></div></div></div>
 </div>
 

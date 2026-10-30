@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404, render
+from UniRideSite.models import Avaliacao, Solicitacao, Trajeto
 
 
 def login(request):
@@ -18,12 +20,17 @@ def cadastrar_trajeto(request):
 
 def caronas_encontradas(request):
     '''Tela 4 - Lista de caronas compatíveis com o trajeto.'''
-    return render(request, 'caronas-encontradas.html')
+    caronas = Trajeto.objects.filter(tipo=Trajeto.OFERECE, ativo=True).annotate(
+        nota=Avg('aluno__avaliacoes_recebidas__estrelas')
+    )
+    return render(request, 'caronas-encontradas.html', {'caronas': caronas})
 
-
-def detalhes_carona(request):
+def detalhes_carona(request, id):
     '''Tela 5 - Detalhes de uma carona.'''
-    return render(request, 'detalhes-carona.html')
+    carona = get_object_or_404(Trajeto, id=id)
+    nota = Avaliacao.objects.filter(avaliado=carona.aluno).aggregate(media=Avg('estrelas'))['media']
+    total_caronas = Solicitacao.objects.filter(trajeto__aluno=carona.aluno, status=Solicitacao.ACEITA).count()
+    return render(request, 'detalhes-carona.html', {'carona': carona, 'nota': nota, 'total_caronas': total_caronas})
 
 
 def minhas_caronas(request):

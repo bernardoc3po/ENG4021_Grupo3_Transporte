@@ -10,16 +10,14 @@
 <body>
 <div class="app">
 <div class="topbar"><a class="back" href="{% url 'home' %}">←</a><div><h1>Caronas encontradas</h1><small>Botafogo → PUC-Rio · 07:20</small></div></div>
-<div class="list"><article class="card"><div class="top"><div class="avatar AN">AN</div><div class="who"><div class="row"><b>Ana</b><span><i class="star">★</i> <b class="r">4,8</b></span></div><div class="chips"><span class="chip">Seg</span><span class="chip">Qua</span><span class="chip">Sex</span></div></div></div>
-<p class="rt">📍 Botafogo → 🎓 PUC-Rio</p><p class="mt">🕐 07:20 &nbsp; 🚗 2 vagas</p>
+<div class="list">
+{% for t in caronas %}
+<article class="card"><div class="top"><div class="avatar {{ t.aluno.nome|slice:':2'|upper }}">{{ t.aluno.nome|slice:':2'|upper }}</div><div class="who"><div class="row"><b>{{ t.aluno.nome }}</b><span><i class="star">★</i> <b class="r">{{ t.nota|floatformat:1|default:"—" }}</b></span></div><div class="chips">{% if t.dom %}<span class="chip">Dom</span>{% endif %}{% if t.seg %}<span class="chip">Seg</span>{% endif %}{% if t.ter %}<span class="chip">Ter</span>{% endif %}{% if t.qua %}<span class="chip">Qua</span>{% endif %}{% if t.qui %}<span class="chip">Qui</span>{% endif %}{% if t.sex %}<span class="chip">Sex</span>{% endif %}{% if t.sab %}<span class="chip">Sáb</span>{% endif %}</div></div></div>
+<p class="rt">📍 {{ t.origem }} → 🎓 {{ t.destino }}</p><p class="mt">🕐 {{ t.horario|time:"H:i" }} &nbsp; 🚗 {{ t.vagas }} vagas</p>
 <div class="row cp"><span>Compatibilidade</span><b>94%</b></div><div class="bar"><i style="width:94%"></i></div>
-<a class="btn ghost" href="{% url 'detalhes-carona' %}">Ver carona</a></article><article class="card"><div class="top"><div class="avatar LU">LU</div><div class="who"><div class="row"><b>Lucas</b><span><i class="star">★</i> <b class="r">4,6</b></span></div><div class="chips"><span class="chip">Seg</span><span class="chip">Ter</span><span class="chip">Qua</span><span class="chip">Qui</span><span class="chip">Sex</span></div></div></div>
-<p class="rt">📍 Flamengo → 🎓 PUC-Rio</p><p class="mt">🕐 07:30 &nbsp; 🚗 3 vagas</p>
-<div class="row cp"><span>Compatibilidade</span><b>82%</b></div><div class="bar"><i style="width:82%"></i></div>
-<a class="btn ghost" href="{% url 'detalhes-carona' %}">Ver carona</a></article><article class="card"><div class="top"><div class="avatar MA">MA</div><div class="who"><div class="row"><b>Mariana</b><span><i class="star">★</i> <b class="r">5,0</b></span></div><div class="chips"><span class="chip">Ter</span><span class="chip">Qui</span></div></div></div>
-<p class="rt">📍 Humaitá → 🎓 PUC-Rio</p><p class="mt">🕐 07:15 &nbsp; 🚗 1 vagas</p>
-<div class="row cp"><span>Compatibilidade</span><b>71%</b></div><div class="bar"><i style="width:71%"></i></div>
-<a class="btn ghost" href="{% url 'detalhes-carona' %}">Ver carona</a></article></div>
+<a class="btn ghost" href="{% url 'detalhes-carona' t.id %}">Ver carona</a></article>
+{% endfor %}
+</div>
 </div>
 <nav class="nav"><a href="{% url 'home' %}" class=""><span>🏠</span>Início</a><a href="{% url 'minhas-caronas' %}" class="on"><span>🚗</span>Caronas</a><a href="{% url 'perfil' %}" class=""><span>👤</span>Perfil</a></nav>
 </body>
