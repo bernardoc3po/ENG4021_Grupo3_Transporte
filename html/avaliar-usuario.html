@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniRide — Avaliar usuário</title>
+<link rel="stylesheet" href="avaliar-usuario.css">
+</head>
+<body>
+<div class="app nonav">
+<div class="topbar"><a class="back" href="minhas-caronas.html" aria-label="Voltar para minhas caronas">←</a><div><h1>Avaliar usuário</h1><small>Sua opinião ajuda toda a comunidade</small></div></div>
+<div class="wrap">
+<div class="card who"><div class="avatar AN">AN</div><div><b>Ana</b><p>Botafogo → PUC-Rio</p><small>Carona de hoje às 07:20</small></div></div>
+<div class="card c"><b>Como foi sua carona com Ana?</b><small>Toque nas estrelas para dar uma nota</small>
+<div class="stars"><input type="radio" name="n" id="n5" hidden><label for="n5" class="s" title="5 estrelas">★</label><input type="radio" name="n" id="n4" hidden><label for="n4" class="s" title="4 estrelas">★</label><input type="radio" name="n" id="n3" hidden><label for="n3" class="s" title="3 estrelas">★</label><input type="radio" name="n" id="n2" hidden><label for="n2" class="s" title="2 estrelas">★</label><input type="radio" name="n" id="n1" hidden><label for="n1" class="s" title="1 estrela">★</label></div><p class="lab"><span class="l0">Selecione uma nota</span><span class="l l1">Muito ruim</span><span class="l l2">Ruim</span><span class="l l3">Regular</span><span class="l l4">Boa</span><span class="l l5">Excelente</span></p></div>
+<div class="card"><b>O que se destacou?</b><small>Selecione quantas opções quiser</small><div class="hls"><input type="checkbox" id="h0" hidden><label for="h0" class="hl"><em>✓</em>Pontualidade</label><input type="checkbox" id="h1" hidden><label for="h1" class="hl"><em>✓</em>Boa conversa</label><input type="checkbox" id="h2" hidden><label for="h2" class="hl"><em>✓</em>Direção segura</label><input type="checkbox" id="h3" hidden><label for="h3" class="hl"><em>✓</em>Respeito</label><input type="checkbox" id="h4" hidden><label for="h4" class="hl"><em>✓</em>Conforto</label></div></div>
+<div class="card"><label for="com"><b>Deixe um comentário</b></label><small>Opcional, mas muito útil para outros estudantes</small>
+<textarea id="com" maxlength="240" placeholder="Conte como foi a experiência da carona..."></textarea></div>
+<p class="info">ⓘ Sua avaliação será pública, mas Ana não poderá avaliar você em resposta.</p>
+<a class="btn send" href="#enviado">Enviar avaliação</a>
+</div>
+<section id="enviado" class="done"><div class="halo"><i>✓</i></div><h2>Avaliação enviada</h2>
+<p>Obrigado por ajudar a construir uma comunidade de caronas mais segura.</p>
+<div class="card who"><div class="avatar AN">AN</div><div class="g"><b>Ana</b><span class="sc sc1"><small>Sua nota: 1 de 5</small></span><span class="sc sc2"><small>Sua nota: 2 de 5</small></span><span class="sc sc3"><small>Sua nota: 3 de 5</small></span><span class="sc sc4"><small>Sua nota: 4 de 5</small></span><span class="sc sc5"><small>Sua nota: 5 de 5</small></span></div><b class="sv sv1"><i class="star">★</i> 1.0</b><b class="sv sv2"><i class="star">★</i> 2.0</b><b class="sv sv3"><i class="star">★</i> 3.0</b><b class="sv sv4"><i class="star">★</i> 4.0</b><b class="sv sv5"><i class="star">★</i> 5.0</b></div>
+<a class="btn" href="minhas-caronas.html">Voltar para minhas caronas</a></section>
+</div>
+</body>
+</html>
