@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, login as entrar, logout as deslogar
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -17,6 +19,40 @@ def login(request):
             return redirect('home')
         erro = 'E-mail ou senha incorretos.'
     return render(request, 'login.html', {'erro': erro})
+
+
+def criar_conta(request):
+    '''Tela 1.1 - Criar conta: cria o usuário de login e o aluno ligado a ele.'''
+    erros = []
+    if request.method == 'POST':
+        nome = request.POST['nome'].strip()
+        email = request.POST['email'].strip().lower()
+        matricula = request.POST['matricula'].strip()
+        curso = request.POST['curso'].strip()
+        senha = request.POST['senha']
+        senha2 = request.POST['senha2']
+
+        if not email.endswith('@puc-rio.br'):
+            erros.append('Use seu e-mail institucional (@puc-rio.br).')
+        if User.objects.filter(username=email).exists() or Aluno.objects.filter(email=email).exists():
+            erros.append('Já existe uma conta com este e-mail.')
+        if Aluno.objects.filter(matricula=matricula).exists():
+            erros.append('Já existe uma conta com esta matrícula.')
+        if len(senha) < 8:
+            erros.append('A senha precisa ter pelo menos 8 caracteres.')
+        if senha != senha2:
+            erros.append('As senhas não são iguais.')
+        if 'termos' not in request.POST:
+            erros.append('É preciso aceitar os Termos de uso.')
+
+        if not erros:
+            # transaction.atomic: se der erro ao criar o aluno, o usuário também não é salvo
+            with transaction.atomic():
+                user = User.objects.create_user(username=email, email=email, password=senha)
+                Aluno.objects.create(user=user, nome=nome, email=email, matricula=matricula, curso=curso)
+            entrar(request, user)
+            return redirect('home')
+    return render(request, 'criar-conta.html', {'erros': erros})
 
 
 def sair(request):
