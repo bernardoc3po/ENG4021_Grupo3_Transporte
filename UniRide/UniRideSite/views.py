@@ -4,8 +4,10 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from UniRideSite.models import Aluno, Avaliacao, Solicitacao, Trajeto
-from django.contrib import messages
-from django.views.decorators.http import require_POST
+
+
+def aluno_temporario(request):
+    return get_object_or_404(Aluno, user=request.user)
 
 def login(request):
     '''Tela 1 - Login: confere e-mail e senha e abre a sessão do aluno.'''
@@ -33,17 +35,42 @@ def home(request):
 
 @login_required
 def cadastrar_trajeto(request):
-    '''Tela 3 - Cadastrar ou editar o trajeto.'''
+    '''Tela 3 - Cadastrar um trajeto.'''
+    if request.method == 'POST':
+        aluno = aluno_temporario(request)
+        dias = request.POST.getlist('dias')
+        Trajeto.objects.create(
+            aluno=aluno,
+            tipo=request.POST.get('tipo'),
+            origem=request.POST.get('origem'),
+            destino=request.POST.get('destino'),
+            horario=request.POST.get('horario'),
+            vagas=int(request.POST.get('vagas', 0)),
+            dom='dom' in dias,
+            seg='seg' in dias,
+            ter='ter' in dias,
+            qua='qua' in dias,
+            qui='qui' in dias,
+            sex='sex' in dias,
+            sab='sab' in dias
+        )
+        return redirect('home')
     return render(request, 'cadastrar-trajeto.html')
 
 
-@login_required
 def caronas_encontradas(request):
-    '''Tela 4 - Lista de caronas compatíveis com o trajeto.'''
-    caronas = Trajeto.objects.filter(tipo=Trajeto.OFERECE, ativo=True).annotate(
-        nota=Avg('aluno__avaliacoes_recebidas__estrelas')
-    )
-    return render(request, 'caronas-encontradas.html', {'caronas': caronas})
+    '''Tela 4 - Busca de caronas.'''
+    caronas = Trajeto.objects.filter(tipo=Trajeto.OFERECE, ativo=True).annotate(nota=Avg('aluno__avaliacoes_recebidas__estrelas'))
+    origem = request.GET.get('origem')
+    horario = request.GET.get('horario')
+    dia = request.GET.get('dia')
+    if origem:
+        caronas = caronas.filter(origem__icontains=origem)
+    if horario:
+        caronas = caronas.filter(horario=horario)
+    if dia in ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']:
+        caronas = caronas.filter(**{dia: True})
+    return render(request, 'caronas-encontradas.html', {'caronas': caronas,'origem': origem,'horario': horario,'dia': dia})
 
 @login_required
 def detalhes_carona(request, id):
@@ -105,51 +132,3 @@ def solicitar_carona(request, id):
         passageiro = aluno_temporario(request)
         Solicitacao.objects.get_or_create(trajeto=carona, passageiro=passageiro)
     return redirect(reverse('detalhes-carona', args=[id]) + '#enviado')
-
-def termos(request):
-    '''Termos de Uso. Página pública: não colocar @login_required (o cadastro aponta para ela).'''
-    return render(request, 'termos.html')
-
-def recuperar_senha(request):
-    '''Recuperar senha. Página pública: não colocar @login_required.'''
-    return render(request, 'recuperar-senha.html')
-
-def aluno_temporario(request):
-    '''Devolve o aluno logado (ligado ao usuário do Django).'''
-    return request.user.aluno
-
-@login_required
-@require_POST
-def responder_solicitacao(request, id):
-    '''O motorista aceita ou recusa um pedido de carona (B5).'''
-    solicitacao = get_object_or_404(Solicitacao, id=id)
-    trajeto = solicitacao.trajeto
-    aluno = aluno_temporario(request)
-    acao = request.POST.get('acao')
-
-    # Só o dono do trajeto pode responder
-    if trajeto.aluno != aluno:
-        messages.error(request, 'Você só pode responder pedidos da sua própria carona.')
-        return redirect('minhas-caronas')
-
-    # Só pedidos que ainda estão esperando resposta
-    if solicitacao.status != Solicitacao.PENDENTE:
-        messages.error(request, 'Este pedido já foi respondido.')
-        return redirect('minhas-caronas')
-
-    if acao == 'aceitar':
-        aceitas = trajeto.solicitacoes.filter(status=Solicitacao.ACEITA).count()
-        if aceitas >= trajeto.vagas:
-            messages.error(request, 'Sua carona não tem mais vagas.')
-            return redirect('minhas-caronas')
-        solicitacao.status = Solicitacao.ACEITA
-        solicitacao.save()
-        messages.success(request, f'{solicitacao.passageiro.nome} entrou na sua carona!')
-    elif acao == 'recusar':
-        solicitacao.status = Solicitacao.RECUSADA
-        solicitacao.save()
-        messages.success(request, f'Pedido de {solicitacao.passageiro.nome} recusado.')
-    else:
-        messages.error(request, 'Ação inválida.')
-
-    return redirect('minhas-caronas')
