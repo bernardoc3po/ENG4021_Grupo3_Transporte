@@ -1,26 +1,32 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UniRide — Criar conta</title>
-<link rel="stylesheet" href="criar-conta.css">
+<link rel="stylesheet" href="{% static 'css/criar-conta.css' %}">
 </head>
 <body>
 <div class="app nonav">
-<div class="topbar"><a class="back" href="login.html">←</a><h1>Criar conta</h1></div>
-<form class="form" action="home.html">
+<div class="topbar"><a class="back" href="{% url 'login' %}">←</a><h1>Criar conta</h1></div>
+<form class="form" method="post" action="{% url 'criar-conta' %}">
+{% csrf_token %}
 <p class="intro">Use seu e-mail institucional para entrar na comunidade do UniRide.</p>
+{% for erro in erros %}<p class="hint" style="color:#dc2626">{{ erro }}</p>{% endfor %}
 
 <label class="label" for="nome">Nome completo</label>
-<div class="field"><span>👤</span><input type="text" id="nome" name="nome" placeholder="Seu nome" autocomplete="name" required></div>
+<div class="field"><span>👤</span><input type="text" id="nome" name="nome" value="{{ request.POST.nome }}" placeholder="Seu nome" autocomplete="name" required></div>
 
 <label class="label" for="email">E-mail institucional</label>
-<div class="field"><span>✉️</span><input type="email" id="email" name="email" placeholder="seu.nome@puc-rio.br" autocomplete="email" required></div>
+<div class="field"><span>✉️</span><input type="email" id="email" name="email" value="{{ request.POST.email }}" placeholder="seu.nome@puc-rio.br" autocomplete="email" required></div>
 <p class="hint">Só alunos e servidores da universidade podem se cadastrar.</p>
 
+<label class="label" for="matricula">Matrícula</label>
+<div class="field"><span>🪪</span><input type="text" id="matricula" name="matricula" value="{{ request.POST.matricula }}" placeholder="Ex.: 2310001" maxlength="10" required></div>
+
 <label class="label" for="curso">Curso</label>
-<div class="field"><span>🎓</span><input type="text" id="curso" name="curso" placeholder="Ex.: Engenharia de Computação" required></div>
+<div class="field"><span>🎓</span><input type="text" id="curso" name="curso" value="{{ request.POST.curso }}" placeholder="Ex.: Engenharia de Computação" required></div>
 
 <label class="label" for="senha">Senha</label>
 <div class="field"><span>🔒</span><input type="password" id="senha" name="senha" placeholder="Mínimo de 8 caracteres" minlength="8" autocomplete="new-password" required></div>
@@ -28,10 +34,10 @@
 <label class="label" for="senha2">Confirmar senha</label>
 <div class="field"><span>🔒</span><input type="password" id="senha2" name="senha2" placeholder="Repita a senha" minlength="8" autocomplete="new-password" required></div>
 
-<label class="terms"><input type="checkbox" name="termos" required><span>Li e aceito os <a href="termos.html">Termos de uso</a> e a <a href="termos.html#s8">Política de privacidade</a>.</span></label>
+<label class="terms"><input type="checkbox" name="termos" required><span>Li e aceito os <a href="{% url 'termos' %}">Termos de uso</a> e a <a href="{% url 'termos' %}#s8">Política de privacidade</a>.</span></label>
 
 <button class="btn" type="submit">Criar conta</button>
-<p class="alt">Já tem conta? <a href="login.html">Entrar</a></p>
+<p class="alt">Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
 </form>
 </div>
 
