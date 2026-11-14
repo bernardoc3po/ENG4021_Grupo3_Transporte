@@ -68,7 +68,17 @@ def sair(request):
 @login_required
 def home(request):
     '''Tela 2 - Início: mostra o trajeto do aluno.'''
-    return render(request, 'home.html')
+    aluno = aluno_temporario(request)
+    trajeto = aluno.trajetos.filter(ativo=True).order_by('-id').first()
+    nota = Avaliacao.objects.filter(avaliado=aluno).aggregate(media=Avg('estrelas'))['media']
+    como_motorista = Solicitacao.objects.filter(trajeto__aluno=aluno, status=Solicitacao.ACEITA).count()
+    como_passageiro = Solicitacao.objects.filter(passageiro=aluno, status=Solicitacao.ACEITA).count()
+    return render(request, 'home.html', {
+        'aluno': aluno,
+        'trajeto': trajeto,
+        'nota': nota,
+        'total_caronas': como_motorista + como_passageiro,
+    })
 
 
 @login_required
@@ -149,7 +159,17 @@ def minhas_caronas(request):
 @login_required
 def perfil(request):
     '''Tela 7 - Perfil do aluno.'''
-    return render(request,'perfil.html')
+    aluno = aluno_temporario(request)
+    trajeto = aluno.trajetos.filter(ativo=True).order_by('-id').first()
+    nota = Avaliacao.objects.filter(avaliado=aluno).aggregate(media=Avg('estrelas'))['media']
+    como_motorista = Solicitacao.objects.filter(trajeto__aluno=aluno, status=Solicitacao.ACEITA).count()
+    como_passageiro = Solicitacao.objects.filter(passageiro=aluno, status=Solicitacao.ACEITA).count()
+    return render(request, 'perfil.html', {
+        'aluno': aluno,
+        'trajeto': trajeto,
+        'nota': nota,
+        'total_caronas': como_motorista + como_passageiro,
+    })
 
 @login_required
 def editar_perfil(request):

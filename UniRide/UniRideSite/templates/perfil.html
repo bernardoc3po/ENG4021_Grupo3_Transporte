@@ -11,9 +11,20 @@
 <div class="app">
 <header class="hero"><div class="row"><h1>Perfil</h1><img src="{% static 'img/logo.png' %}" alt="UniRide"></div></header>
 <div class="wrap">
-<div class="card who"><div class="avatar BS">BS</div><div><h2>Bernardo Souza</h2><p>Engenharia de Computação</p><p class="u">PUC-Rio</p></div></div>
-<div class="two"><div class="card"><strong><i class="star">★</i> 4,9</strong><small>Avaliação</small></div><div class="card"><strong class="bl">23</strong><small>Caronas realizadas</small></div></div>
-<div class="card list"><div><span>E-mail</span><b>bernardo@puc-rio.br</b></div><div><span>Membro desde</span><b>Março 2024</b></div><div><span>Trajeto principal</span><b>Botafogo → PUC-Rio</b></div></div>
+<div class="card who">
+<div class="avatar {{ aluno.nome|slice:':2'|upper }}">{{ aluno.nome|slice:':2'|upper }}</div>
+<div>
+<h2>{{ aluno.nome }}</h2>
+<p>{{ aluno.curso }}</p>
+<p class="u">PUC-Rio</p>
+</div>
+</div>
+<div class="two"><div class="card"><strong><i class="star">★</i> {{ nota|floatformat:1|default:"—" }}</strong><small>Avaliação</small></div><div class="card"><strong class="bl">{{ total_caronas }}</strong><small>Caronas realizadas</small></div></div>
+<div class="card list">
+<div><span>E-mail</span><b>{{ aluno.email }}</b></div>
+<div><span>Membro desde</span><b>{{ aluno.membro_desde|date:"d/m/Y" }}</b></div>
+<div><span>Trajeto principal</span><b>{% if trajeto %}{{ trajeto.origem }} → {{ trajeto.destino }}{% else %}—{% endif %}</b></div>
+</div>
 <a class="btn ghost" href="{% url 'editar-perfil' %}">Editar perfil</a><a class="btn ghost gray" href="{% url 'sair' %}">Sair</a></div>
 </div>
 <nav class="nav"><a href="{% url 'home' %}" class=""><span>🏠</span>Início</a><a href="{% url 'minhas-caronas' %}" class=""><span>🚗</span>Caronas</a><a href="{% url 'perfil' %}" class="on"><span>👤</span>Perfil</a></nav>
