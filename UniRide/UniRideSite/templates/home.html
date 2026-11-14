@@ -10,14 +10,39 @@
 <body>
 <div class="app">
 <header class="hero"><div class="row"><img src="{% static 'img/logo.png' %}" alt="UniRide"><span class="bell">🔔</span></div>
-<p>Bom dia 👋</p><h1>Olá, Be</h1></header>
+<p>Bom dia 👋</p>
+<h1>Olá, {{ aluno.nome }}</h1></header>
 <section class="route card"><div class="row"><span class="label" style="color:var(--blue)">Seu trajeto</span><a class="edit" href="{% url 'cadastrar-trajeto' %}">✏️ Editar</a></div>
+{% if trajeto %}
 <div class="path"><div class="dots"><i class="d1"></i><i class="line"></i><i class="d2"></i></div>
-<div><small>Origem</small><b>📍 Botafogo</b><small>Destino</small><b>🎓 PUC-Rio</b></div></div>
-<div class="meta"><b>🕐 07:20</b><u></u><span class="chip b">Seg</span><span class="chip b">Ter</span><span class="chip b">Qua</span><span class="chip b">Qui</span><span class="chip b">Sex</span></div>
-<span class="offer">🚗 Ofereço carona · 2 vagas</span></section>
+<div>
+<small>Origem</small>
+<b>📍 {{ trajeto.origem }}</b>
+<small>Destino</small>
+<b>🎓 {{ trajeto.destino }}</b>
+</div></div>
+<div class="meta">
+<b>🕐 {{ trajeto.horario|time:"H:i" }}</b>
+<u></u>
+{% if trajeto.dom %}<span class="chip b">Dom</span>{% endif %}
+{% if trajeto.seg %}<span class="chip b">Seg</span>{% endif %}
+{% if trajeto.ter %}<span class="chip b">Ter</span>{% endif %}
+{% if trajeto.qua %}<span class="chip b">Qua</span>{% endif %}
+{% if trajeto.qui %}<span class="chip b">Qui</span>{% endif %}
+{% if trajeto.sex %}<span class="chip b">Sex</span>{% endif %}
+{% if trajeto.sab %}<span class="chip b">Sáb</span>{% endif %}
+</div>
+{% if trajeto.tipo == 'OFERECE' %}
+<span class="offer">🚗 Ofereço carona · {{ trajeto.vagas }} vagas</span>
+{% else %}
+<span class="offer">🙋 Procuro carona</span>
+{% endif %}
+{% else %}
+<p>Você ainda não cadastrou um trajeto. Toque em Editar para começar.</p>
+{% endif %}
+</section>
 <a class="btn cta" href="{% url 'caronas-encontradas' %}">🔍 Encontrar caronas</a>
-<div class="stats"><div class="card"><strong>23</strong><small>Caronas realizadas</small></div><div class="card"><strong class="g"><span class="star">★</span> 4,9</strong><small>Sua avaliação</small></div></div>
+<div class="stats"><div class="card"><strong>{{ total_caronas }}</strong><small>Caronas realizadas</small></div><div class="card"><strong class="g"><span class="star">★</span> {{ nota|floatformat:1|default:"—" }}</strong><small>Sua avaliação</small></div></div>
 </div>
 <nav class="nav"><a href="{% url 'home' %}" class="on"><span>🏠</span>Início</a><a href="{% url 'minhas-caronas' %}" class=""><span>🚗</span>Caronas</a><a href="{% url 'perfil' %}" class=""><span>👤</span>Perfil</a></nav>
 </body>
