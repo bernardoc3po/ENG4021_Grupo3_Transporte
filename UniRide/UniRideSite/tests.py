@@ -65,3 +65,41 @@ class ResponderSolicitacaoTests(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertIn(reverse('login'), r['Location'])
         self.assertEqual(self.status(), Solicitacao.PENDENTE)
+
+
+class CriarContaTests(TestCase):
+    '''Bloco A - parte 3: cadastro de aluno com e-mail institucional.'''
+
+    def dados(self, **mudancas):
+        d = {'nome': 'Maria Silva', 'email': 'maria@puc-rio.br', 'matricula': '2410001',
+             'curso': 'Direito', 'senha': 'senhaforte', 'senha2': 'senhaforte', 'termos': 'on'}
+        d.update(mudancas)
+        return d
+
+    def test_cria_usuario_e_aluno_e_entra(self):
+        r = self.client.post(reverse('criar-conta'), self.dados())
+        self.assertRedirects(r, reverse('home'))
+        aluno = Aluno.objects.get(email='maria@puc-rio.br')
+        self.assertEqual(aluno.user.username, 'maria@puc-rio.br')
+        self.assertTrue(self.client.login(username='maria@puc-rio.br', password='senhaforte'))
+
+    def test_recusa_email_fora_da_puc(self):
+        self.client.post(reverse('criar-conta'), self.dados(email='maria@gmail.com'))
+        self.assertFalse(Aluno.objects.exists())
+        self.assertFalse(User.objects.exists())
+
+    def test_recusa_senhas_diferentes(self):
+        self.client.post(reverse('criar-conta'), self.dados(senha2='outrasenha'))
+        self.assertFalse(Aluno.objects.exists())
+
+    def test_recusa_email_ou_matricula_repetidos(self):
+        criar_aluno('Joao', 'joao@puc-rio.br', '2410009')
+        self.client.post(reverse('criar-conta'), self.dados(email='joao@puc-rio.br'))
+        self.client.post(reverse('criar-conta'), self.dados(matricula='2410009'))
+        self.assertEqual(Aluno.objects.count(), 1)
+
+    def test_recusa_sem_aceitar_termos(self):
+        dados = self.dados()
+        del dados['termos']
+        self.client.post(reverse('criar-conta'), dados)
+        self.assertFalse(Aluno.objects.exists())

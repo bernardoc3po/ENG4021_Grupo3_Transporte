@@ -13,7 +13,7 @@
 <header><div class="logo-box"><img src="{% static 'img/logo.png' %}" alt="UniRide — carona universitária"></div><p>Conectando estudantes universitários</p></header>
 <form class="sheet" method="post" action="{% url 'login' %}">
 {% csrf_token %}
-<div class="tabs"><a class="on" href="{% url 'login' %}">Entrar</a><a href="{% url 'login' %}#criar">Criar conta</a></div>
+<div class="tabs"><a class="on" href="{% url 'login' %}">Entrar</a><a href="{% url 'criar-conta' %}">Criar conta</a></div>
 <label class="label" for="e">E-mail institucional</label><input id="e" name="email" type="email" placeholder="bernardo@puc-rio.br" required>
 <label class="label" for="s">Senha</label><input id="s" name="senha" type="password" placeholder="••••••••" required>
 {% if erro %}<p class="forgot" style="color:#dc2626">{{ erro }}</p>{% endif %}

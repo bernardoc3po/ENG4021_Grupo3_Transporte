@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.login, name='login'),
     path('sair/', views.sair, name='sair'),
+    path('criar-conta/', views.criar_conta, name='criar-conta'),
     path('inicio/', views.home, name='home'),
     path('trajeto/', views.cadastrar_trajeto, name='cadastrar-trajeto'),
     path('caronas/', views.caronas_encontradas, name='caronas-encontradas'),
