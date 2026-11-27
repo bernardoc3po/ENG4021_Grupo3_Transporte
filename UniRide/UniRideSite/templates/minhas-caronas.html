@@ -16,7 +16,7 @@
 <p class="label">Caronas ativas</p>
 {% for s in caronas_aceitas %}{% with t=s.trajeto %}
 <article class="card active"><p class="on"><i class="dot"></i> Carona ativa</p>
-<div class="who"><div class="avatar {{ t.aluno.nome|slice:':2'|upper }}">{{ t.aluno.nome|slice:':2'|upper }}</div><div class="info"><b>{{ t.aluno.nome }}</b><p>{{ t.origem }} → {{ t.destino }}</p><div>{% include 'partials/dias.html' %}<small>· {{ t.horario|time:"H:i" }}</small></div></div><a class="det" href="{% url 'detalhes-carona' t.id %}">Detalhes</a></div></article>
+<div class="who"><div class="avatar {{ t.aluno.nome|slice:':2'|upper }}">{{ t.aluno.nome|slice:':2'|upper }}</div><div class="info"><b>{{ t.aluno.nome }}</b><p>{{ t.origem }} → {{ t.destino }}</p><div>{% include 'partials/dias.html' %}<small>· {{ t.horario|time:"H:i" }}</small></div></div><a class="det" href="{% url 'detalhes-carona' t.id %}">Detalhes</a></div><a class="rate" href="{% url 'avaliar-usuario' s.id %}"><i class="star">★</i> Avaliar</a></article>
 {% endwith %}{% empty %}
 <div class="card empty"><p>Você ainda não tem nenhuma carona confirmada.</p><a class="det" href="{% url 'caronas-encontradas' %}">Encontrar caronas</a></div>
 {% endfor %}
@@ -50,7 +50,7 @@
 
 <p class="label">Passageiros confirmados · {{ passageiros_confirmados|length }} de {{ trajeto_motorista.vagas }} vagas</p>
 {% for s in passageiros_confirmados %}
-<div class="card ok"><div class="who"><div class="avatar {{ s.passageiro.nome|slice:':2'|upper }}">{{ s.passageiro.nome|slice:':2'|upper }}</div><div class="info"><b>{{ s.passageiro.nome }}</b><p>{{ s.passageiro.curso }}</p></div></div></div>
+<div class="card ok"><div class="who"><div class="avatar {{ s.passageiro.nome|slice:':2'|upper }}">{{ s.passageiro.nome|slice:':2'|upper }}</div><div class="info"><b>{{ s.passageiro.nome }}</b><p>{{ s.passageiro.curso }}</p></div></div><a class="rate" href="{% url 'avaliar-usuario' s.id %}"><i class="star">★</i> Avaliar</a></div>
 {% empty %}
 <div class="card empty"><p>Ninguém confirmado ainda. Os passageiros que você aceitar aparecem aqui.</p></div>
 {% endfor %}

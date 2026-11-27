@@ -36,4 +36,5 @@ urlpatterns = [
     path('termos/', views.termos, name='termos'),
     path('recuperar-senha/', views.recuperar_senha, name='recuperar-senha'),
         path('solicitacao/<int:id>/responder/', views.responder_solicitacao, name='responder-solicitacao'),
+    path('avaliar/<int:id>/', views.avaliar_usuario, name='avaliar-usuario'),
 ]
