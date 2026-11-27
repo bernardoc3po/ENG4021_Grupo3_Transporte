@@ -62,3 +62,7 @@ body{font-family:'Outfit',sans-serif;background:#E5E7EB;color:var(--g700)}
 /* Listas vazias (B7) */
 .empty{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px dashed var(--g200);background:transparent}
 .empty p{font-size:13px;color:var(--g500)}
+
+/* Botão "Avaliar" nas caronas aceitas */
+.rate{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;background:#FEFCE8;color:#A16207;font-weight:700;font-size:14px;padding:10px;border-radius:12px}
+.rate:hover{background:#FEF9C3}.rate:active{transform:scale(.97)}
