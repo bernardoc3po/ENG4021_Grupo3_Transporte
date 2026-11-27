@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from UniRideSite.models import Aluno, Solicitacao, Trajeto
+from UniRideSite.models import Aluno, Avaliacao, Solicitacao, Trajeto
 
 
 def criar_aluno(nome, email, matricula):
@@ -103,3 +103,66 @@ class CriarContaTests(TestCase):
         del dados['termos']
         self.client.post(reverse('criar-conta'), dados)
         self.assertFalse(Aluno.objects.exists())
+
+
+class AvaliarUsuarioTests(TestCase):
+    '''Bloco 1: depois de uma carona aceita, passageiro e motorista se avaliam.'''
+
+    def setUp(self):
+        self.motorista = criar_aluno('Ana', 'ana@teste.com', '1')
+        self.passageiro = criar_aluno('Joao', 'joao@teste.com', '2')
+        self.outro = criar_aluno('Bernardo', 'bernardo@teste.com', '3')
+        trajeto = Trajeto.objects.create(aluno=self.motorista, tipo=Trajeto.OFERECE,
+                                         origem='Botafogo', horario='07:20', vagas=2, seg=True)
+        self.carona = Solicitacao.objects.create(trajeto=trajeto, passageiro=self.passageiro,
+                                                 status=Solicitacao.ACEITA)
+        self.url = reverse('avaliar-usuario', args=[self.carona.id])
+
+    def avaliar(self, email, estrelas='4'):
+        self.client.login(username=email, password='uniride123')
+        return self.client.post(self.url, {'estrelas': estrelas, 'comentario': 'Tudo certo'})
+
+    def test_motorista_avalia_passageiro_e_nota_do_perfil_muda(self):
+        r = self.avaliar('ana@teste.com', '4')
+        self.assertRedirects(r, self.url)
+        avaliacao = Avaliacao.objects.get()
+        self.assertEqual(avaliacao.avaliado, self.passageiro)
+        self.assertEqual(avaliacao.estrelas, 4)
+        # A nota do Perfil é a média das avaliações recebidas
+        self.client.login(username='joao@teste.com', password='uniride123')
+        self.assertEqual(self.client.get(reverse('perfil')).context['nota'], 4)
+
+    def test_passageiro_avalia_motorista(self):
+        self.client.login(username='joao@teste.com', password='uniride123')
+        self.client.post(self.url, {'estrelas': '5', 'comentario': 'Tudo certo', 'destaques': 'Pontualidade'})
+        avaliacao = Avaliacao.objects.get()
+        self.assertEqual(avaliacao.avaliado, self.motorista)
+        self.assertEqual(avaliacao.comentario, 'Destaques: Pontualidade. Tudo certo')
+
+    def test_quem_nao_participou_recebe_404(self):
+        r = self.avaliar('bernardo@teste.com')
+        self.assertEqual(r.status_code, 404)
+        self.assertFalse(Avaliacao.objects.exists())
+
+    def test_carona_nao_aceita_nao_pode_ser_avaliada(self):
+        self.carona.status = Solicitacao.PENDENTE
+        self.carona.save()
+        r = self.avaliar('ana@teste.com')
+        self.assertRedirects(r, reverse('minhas-caronas'))
+        self.assertFalse(Avaliacao.objects.exists())
+
+    def test_avaliar_duas_vezes_mantem_a_primeira(self):
+        self.avaliar('ana@teste.com', '4')
+        self.avaliar('ana@teste.com', '1')
+        self.assertEqual(Avaliacao.objects.count(), 1)
+        self.assertEqual(Avaliacao.objects.get().estrelas, 4)
+
+    def test_nota_fora_de_1_a_5_nao_e_salva(self):
+        r = self.avaliar('ana@teste.com', '7')
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(Avaliacao.objects.exists())
+
+    def test_deslogado_vai_para_login(self):
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 302)
+        self.assertIn(reverse('login'), r['Location'])

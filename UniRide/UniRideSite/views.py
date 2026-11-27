@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Avg
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from UniRideSite.models import Aluno, Avaliacao, Solicitacao, Trajeto
@@ -235,3 +236,52 @@ def responder_solicitacao(request, id):
         messages.error(request, 'Ação inválida.')
 
     return redirect('minhas-caronas')
+
+
+@login_required
+def avaliar_usuario(request, id):
+    '''Avaliar usuário: depois de uma carona aceita, cada um avalia o outro (1 a 5 estrelas).'''
+    solicitacao = get_object_or_404(Solicitacao, id=id)
+    trajeto = solicitacao.trajeto
+    aluno = aluno_temporario(request)
+
+    # O passageiro avalia o motorista; o motorista avalia o passageiro.
+    # Quem não participou da carona recebe 404, como se ela não existisse.
+    if aluno == solicitacao.passageiro:
+        avaliado = trajeto.aluno
+    elif aluno == trajeto.aluno:
+        avaliado = solicitacao.passageiro
+    else:
+        raise Http404
+
+    # Só caronas que o motorista já aceitou
+    if solicitacao.status != Solicitacao.ACEITA or avaliado == aluno:
+        messages.error(request, 'Só dá para avaliar caronas aceitas.')
+        return redirect('minhas-caronas')
+
+    avaliacao = Avaliacao.objects.filter(solicitacao=solicitacao, avaliador=aluno).first()
+    erro = None
+
+    if request.method == 'POST' and avaliacao is None:
+        estrelas = request.POST.get('estrelas', '')
+        if estrelas in ['1', '2', '3', '4', '5']:
+            comentario = request.POST.get('comentario', '').strip()
+            destaques = request.POST.getlist('destaques')
+            if destaques:
+                # O modelo não tem campo para os destaques: eles entram no começo do comentário
+                comentario = ('Destaques: ' + ', '.join(destaques) + '. ' + comentario).strip()
+            # get_or_create com defaults: se a pessoa enviar duas vezes, vale a primeira avaliação
+            Avaliacao.objects.get_or_create(
+                solicitacao=solicitacao,
+                avaliador=aluno,
+                defaults={'avaliado': avaliado, 'estrelas': int(estrelas), 'comentario': comentario},
+            )
+            return redirect('avaliar-usuario', id=solicitacao.id)
+        erro = 'Escolha uma nota de 1 a 5 estrelas.'
+
+    return render(request, 'avaliar-usuario.html', {
+        'trajeto': trajeto,
+        'avaliado': avaliado,
+        'avaliacao': avaliacao,
+        'erro': erro,
+    })
